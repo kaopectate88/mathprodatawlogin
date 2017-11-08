@@ -1,7 +1,9 @@
 // config/passport.js
 
 // load all the things we need
-var LocalStrategy   = require('passport-local').Strategy;
+var LocalStrategy   = require('passport-local-roles').Strategy;
+
+
 
 // load up the user model
 var User            = require('../app/models/user');
@@ -35,13 +37,15 @@ module.exports = function(passport) {
 
     passport.use('local-signup', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
-       
+        
         usernameField : 'email',
         passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
+        roleField     : 'role',
+        passReqToCallback : true,
+        session: false // allows us to pass back the entire request to the callback
     },
-    function(req, email, password, done) {
-
+    function(req, email, password, role, done) {
+       
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
         User.findOne({ 'local.email' :  email }, function(err, user) {
@@ -61,6 +65,10 @@ module.exports = function(passport) {
                 // set the user's local credentials
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
+                newUser.local.role     = role;
+
+
+
          
                 // save the user
                 newUser.save(function(err) {
@@ -69,6 +77,7 @@ module.exports = function(passport) {
                     return done(null, newUser);
                 });
             }
+            
 
         });
 
@@ -84,9 +93,10 @@ module.exports = function(passport) {
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'email',
         passwordField : 'password',
+        roleField     : 'role',
         passReqToCallback : true // allows us to pass back the entire request to the callback
     },
-    function(req, email, password, done) { // callback with email and password from our form
+    function(req, email, password, role, done) { // callback with email and password from our form
 
         // find a user whose email is the same as the forms email
         // we are checking to see if the user trying to login already exists
