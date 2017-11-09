@@ -3,7 +3,7 @@ const express      = require('express'),
   router           = express.Router(),
   mainController   = require('./controllers/main.controller'),
   eventsController = require('./controllers/events.controller');
-
+  profileController = require('./controllers/profile.controller');
 var passportOptions = {
 	successRedirect: '/profile',
 	failureRedirect: '/login'
@@ -56,7 +56,13 @@ module.exports = function(app, passport){
 
 // define routes
 // main routes
+
+
+
 app.get('/', mainController.showHome);
+
+
+
 
 
 
@@ -114,10 +120,15 @@ app.get('/', mainController.showHome);
 
 
 
-
+// event routes
+	app.get('/events', isLoggedIn, require ('permission') (['Expert']), eventsController.showEvents, function(req,res){
+		res.render('events.ejs', {
+			users: req.user
+		});
+	});
 
 	// event routes
-	app.get('/events', isLoggedIn, eventsController.showEvents, function(req,res){
+	app.get('/events', isLoggedIn, require ('permission') (['Expert']), eventsController.showEvents, function(req,res){
 		res.render('events.ejs', {
 			users: req.user
 		});
@@ -161,14 +172,14 @@ app.get('/', mainController.showHome);
 	// SIGNUP ==============================
 	// =====================================
 	// show the signup form
-	app.get('/signup2', function(req, res) {
+	app.get('/signup', function(req, res) {
 
 		// render the page and pass in any flash data if it exists
-		res.render('signup2.ejs', { message: req.flash('signupMessage') });
+		res.render('signup.ejs', { message: req.flash('signupMessage') });
 	});
 
 	// process the signup form
-	app.post('/signup2', passport.authenticate('local-signup', {
+	app.post('/signup', passport.authenticate('local-signup', {
 		successRedirect : '/profile', // redirect to the secure profile section
 		failureRedirect : '/signup2', // redirect back to the signup page if there is an error
 		failureFlash : true // allow flash messages
@@ -179,7 +190,7 @@ app.get('/', mainController.showHome);
 	// =====================================
 	// we will want this protected so you have to be logged in to visit
 	// we will use route middleware to verify this (the isLoggedIn function)
-	app.get('/profile', isLoggedIn2, function(req, res) {
+	app.get('/profile', isLoggedIn, function(req, res) {
 		res.render('profile.ejs', {
 			user : req.user // get the user out of session and pass to template
 		});
@@ -187,7 +198,7 @@ app.get('/', mainController.showHome);
 
 
 	// event routes
-	app.get('/events/create', isLoggedIn2, eventsController.showCreate, function(req,res){
+	app.get('/create', isLoggedIn2, require('permission') (['Customer']), eventsController.showCreate, function(req,res){
 		res.render('create.ejs', {
 			users: req.user
 		});
@@ -212,7 +223,7 @@ app.get('/events/seed',  eventsController.seedEvents);
 
 // create events
 
-app.post('/events/create', eventsController.processCreate);
+app.post('/create', eventsController.processCreate);
 
 // edit events
 app.get('/events/:slug/edit', eventsController.showEdit);

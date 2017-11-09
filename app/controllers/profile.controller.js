@@ -1,7 +1,7 @@
 const Event = require('../models/event');
 
 module.exports = {
-  showEvents: showEvents,
+  showProfile: showProfile,
   showSingle: showSingle,
   seedEvents: seedEvents,
   showCreate: showCreate,
@@ -14,7 +14,7 @@ module.exports = {
 /**
  * Show all events
  */
-function showEvents(req, res) {
+function showProfile(req, res) {
   // get all events   
   Event.find({}, (err, events) => {
     if (err) {
@@ -23,7 +23,7 @@ function showEvents(req, res) {
     }
 
     // return a view with data
-    res.render('pages/events', { 
+    res.render('pages/profile', { 
       events: events,
       success: req.flash('success')
     });
@@ -121,7 +121,7 @@ function processCreate(req, res) {
     req.flash('success', 'Successfuly created project!');
 
     // redirect to the newly created event
-    res.redirect(`/events/${event.slug}`);
+    res.redirect(`/0/${event.slug}`);
   });
 }
 

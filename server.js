@@ -4,22 +4,17 @@ require('dotenv').config();
 // grab our dependencies
 const express    = require('express'),
   app            = express(),
-  app2           = express(),
   port           = process.env.PORT || 8080,
   expressLayouts = require('express-ejs-layouts'),
   mongoose       = require('mongoose'),
-  mongoose1       = require('mongoose'),
-  mongoose2       = require('mongoose'),
   bodyParser     = require('body-parser'),
   session        = require('express-session'),
   cookieParser   = require('cookie-parser'),
   passport       = require('passport'),
   passport2       = require('passport'),
   logger         = require('morgan'),
-  logger2         = require('morgan'),
   flash          = require('connect-flash'),
-  configDB       = require('./config/database.js'),
-  configDB2       = require('./config/database2.js'),
+
 
   expressValidator = require('express-validator');
 
